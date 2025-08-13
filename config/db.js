@@ -6,6 +6,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: console.log
   },
@@ -14,6 +15,7 @@ module.exports = {
     password: process.env.DB_TEST_PASSWORD,
     database: process.env.DB_TEST_NAME,
     host: process.env.DB_TEST_HOST,
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false
   },
@@ -22,6 +24,7 @@ module.exports = {
     password: process.env.DB_PROD_PASSWORD,
     database: process.env.DB_PROD_NAME,
     host: process.env.DB_PROD_HOST,
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: false,
     dialectOptions: {
@@ -29,6 +32,12 @@ module.exports = {
         require: true,
         rejectUnauthorized: false
       }
+    },
+     pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
     }
   }
 };
