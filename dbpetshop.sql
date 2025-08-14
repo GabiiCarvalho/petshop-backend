@@ -184,6 +184,30 @@ CREATE TABLE configuracoes (
 	UNIQUE(loja_id, chave)
 );
 
+CREATE TABLE planos_mensais (
+	id SERIAL PRIMARY KEY,
+	loja_id INTEGER NOT NULL REFERENCES lojas(id),
+	pet_id INTEGER NOT NULL REFERENCES pets(id),
+	cliente_id INTEGER NOT NULL REFERENCES clientes(id),
+	data_inicio DATE NOT NULL,
+	data_fim DATE NOT NULL,
+	banhos_inclusos INTEGER NOT NULL DEFAULT 4,
+	banhos_utilizados INTEGER NOT NULL DEFAULT 0,
+	tosas_inclusas INTEGER NOT NULL DEFAULT 1,
+	tosas_utilizadas INTEGER NOT NULL DEFAULT 0,
+	valor_total DECIMAL(10,2) NOT NULL,
+	status VARCHAR(20) NOT NULL DEFAULT 'ativo',
+	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Adicionar campo tem_plano na tabela pets
+ALTER TABLE pets ADD COLUMN tem_plano BOOLEAN DEFAULT false;
+
+-- Adicionar campo usando_plano na tabela agendamento_itens
+ALTER TABLE agendamento_itens ADD COLUMN usando_plano BOOLEAN DEFAULT false;
+
+
 -- Índices para tabela 'agendamentos'
 CREATE INDEX idx_agendamentos_loja_data ON agendamentos(loja_id, data_hora);
 CREATE INDEX idx_agendamentos_status ON agendamentos(status);

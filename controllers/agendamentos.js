@@ -21,13 +21,13 @@ module.exports = {
 
     // Verifica cada serviço
     for (const servicoReq of servicos) {
-      const servico = await Servico.findOne({ 
-        where: { id: servicoReq.servico_id, loja_id } 
+      const servico = await Servico.findOne({
+        where: { id: servicoReq.servico_id, loja_id }
       });
-      
+
       if (!servico) {
-        return res.status(400).json({ 
-          error: `Serviço ID ${servicoReq.servico_id} não encontrado` 
+        return res.status(400).json({
+          error: `Serviço ID ${servicoReq.servico_id} não encontrado`
         });
       }
 
@@ -51,7 +51,7 @@ module.exports = {
     const itens = [];
     for (const servicoReq of servicos) {
       const servico = await Servico.findByPk(servicoReq.servico_id);
-      
+
       const item = await AgendamentoItem.create({
         agendamento_id: agendamento.id,
         servico_id: servico.id,
@@ -61,7 +61,7 @@ module.exports = {
         usando_plano: servicoReq.usando_plano || false,
         observacoes: servicoReq.observacoes
       });
-      
+
       itens.push(item);
     }
 
@@ -72,12 +72,65 @@ module.exports = {
     });
   },
 
+  async usarPlanoMensal(req, res) {
+  const { lojaId } = req;
+  const { agendamentoId } = req.params;
+
+  const agendamento = await Agendamento.findByPk(agendamentoId, {
+    include: [
+      { model: Pet, as: 'Pet' },
+      { model: AgendamentoItem, as: 'Itens' }
+    ]
+  });
+
+  if (!agendamento) {
+    return res.status(404).json({ error: 'Agendamento não encontrado' });
+  }
+
+  // Verifica se o pet tem plano ativo
+  const planoAtivo = await PlanoMensal.findOne({
+    where: {
+      pet_id: agendamento.pet_id,
+      status: 'ativo',
+      data_fim: { [Op.gte]: new Date() }
+    }
+  });
+
+  if (!planoAtivo) {
+    return res.status(400).json({ error: 'Pet não possui plano ativo' });
+  }
+
+  // Verifica se há banhos disponíveis no plano
+  if (planoAtivo.banhos_utilizados >= planoAtivo.banhos_inclusos) {
+    return res.status(400).json({ error: 'Banhos do plano esgotados' });
+  }
+
+  // Atualiza os itens do agendamento para usar o plano
+  await Promise.all(
+    agendamento.Itens.map(async item => {
+      if (item.servico_id) { // Se for um serviço (não produto)
+        await item.update({ usando_plano: true });
+      }
+    })
+  );
+
+  // Atualiza o contador do plano
+  await planoAtivo.update({
+    banhos_utilizados: planoAtivo.banhos_utilizados + 1
+  });
+
+  return res.json({
+    message: 'Plano mensal aplicado com sucesso',
+    banhos_restantes: planoAtivo.banhos_inclusos - (planoAtivo.banhos_utilizados + 1)
+  });
+},
+
   async listarPorLoja(req, res) {
     const { lojaId } = req.params;
     const { data_inicio, data_fim, status } = req.query;
 
     const where = { loja_id: lojaId };
-    
+
     if (status) {
       where.status = status;
     }
