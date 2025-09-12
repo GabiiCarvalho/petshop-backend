@@ -1,4 +1,6 @@
-module.exports = (sequelize, DataTypes) => {
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize, Sequelize) => {
   const Loja = sequelize.define('Loja', {
     id: {
       type: DataTypes.INTEGER,
@@ -9,66 +11,43 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: {
-          msg: 'O nome da loja é obrigatório'
-        },
-        len: {
-          args: [3, 100],
-          msg: 'O nome da loja deve ter entre 3 e 100 caracteres'
-        }
+        notEmpty: true
       }
     },
     endereco: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
     telefone: {
       type: DataTypes.STRING,
+      allowNull: false,
       validate: {
-        is: {
-          args: /^\(?\d{2}\)?[\s-]?\d{4,5}[\s-]?\d{4}$/,
-          msg: 'Telefone inválido'
-        }
+        notEmpty: true
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isEmail: true
       }
     },
     cnpj: {
       type: DataTypes.STRING,
-      unique: true,
-      validate: {
-        isCNPJ(value) {
-          if (!/^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/.test(value)) {
-            throw new Error('CNPJ inválido');
-          }
-        }
-      }
-    },
-    usuario_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'usuarios',
-        key: 'id'
-      }
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'created_at'
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      field: 'updated_at'
+      allowNull: true,
+      unique: true
     }
   }, {
     tableName: 'lojas',
-    timestamps: true
+    timestamps: true,
+    createdAt: 'criado_em',
+    updatedAt: 'atualizado_em'
   });
 
-  Loja.associate = (models) => {
-    Loja.belongsTo(models.Usuario, {
-      foreignKey: 'usuario_id',
-      as: 'proprietario'
+  Loja.associate = function(models) {
+    Loja.hasMany(models.Usuario, {
+      foreignKey: 'loja_id',
+      as: 'usuarios'
     });
   };
 

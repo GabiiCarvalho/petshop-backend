@@ -6,10 +6,10 @@ async function testModels() {
     await db.sequelize.sync({ force: false });
 
     const [usuario] = await db.Usuario.findOrCreate({
-      where: { email: 'exemplo@email.com' },
+      where: { email: 'proprietario@email.com' },
       defaults: {
         nome: 'Usuário Teste',
-        senha: 'senha123',
+        senha: 'admin123',
         tipo: 'admin'
       }
     });

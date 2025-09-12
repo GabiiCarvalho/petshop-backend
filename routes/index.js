@@ -1,26 +1,19 @@
 const express = require('express');
 const router = express.Router();
 
-// Importar todas as rotas
+// Importar apenas auth routes para teste
 const authRoutes = require('./auth');
-const lojaRoutes = require('./lojas');
-const usuarioRoutes = require('./usuarios');
-const clienteRoutes = require('./clientes');
-const petRoutes = require('./pets');
-const servicoRoutes = require('./servicos');
-const agendamentoRoutes = require('./agendamentos');
-const vendaRoutes = require('./vendas');
 
 // Rotas públicas
 router.use('/auth', authRoutes);
 
-// Rotas autenticadas
-router.use('/lojas', lojaRoutes);
-router.use('/usuarios', usuarioRoutes);
-router.use('/clientes', clienteRoutes);
-router.use('/pets', petRoutes);
-router.use('/servicos', servicoRoutes);
-router.use('/agendamentos', agendamentoRoutes);
-router.use('/vendas', vendaRoutes);
+// Rotas placeholder para as outras (evitar erro 404)
+router.use('/lojas', (req, res) => res.json({ message: 'Lojas placeholder' }));
+router.use('/usuarios', (req, res) => res.json({ message: 'Usuarios placeholder' }));
+router.use('/clientes', (req, res) => res.json({ message: 'Clientes placeholder' }));
+router.use('/pets', (req, res) => res.json({ message: 'Pets placeholder' }));
+router.use('/servicos', (req, res) => res.json({ message: 'Servicos placeholder' }));
+router.use('/agendamentos', (req, res) => res.json({ message: 'Agendamentos placeholder' }));
+router.use('/vendas', (req, res) => res.json({ message: 'Vendas placeholder' }));
 
 module.exports = router;

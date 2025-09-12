@@ -25,7 +25,7 @@ const db = {
   Loja: require('./Loja')(sequelize, Sequelize)
 };
 
-// Definir associações entre modelos (se houver)
+// Definir associações entre modelos
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
