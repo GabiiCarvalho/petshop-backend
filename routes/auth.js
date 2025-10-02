@@ -26,8 +26,8 @@ router.post('/login', (req, res) => {
     }
 });
 
-// Rota de cadastro de proprietário - CORRIGIDA! (adição da barra /)
-router.post('/cadastrar-proprietario', (req, res) => { // ← FALTAVA A BARRA /
+// Rota de cadastro de proprietário
+router.post('/cadastrar-proprietario', (req, res) => {
     try {
         console.log('📝 Dados recebidos para cadastro:', JSON.stringify(req.body, null, 2));
 

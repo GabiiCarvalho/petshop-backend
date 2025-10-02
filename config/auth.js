@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config/database');
+const { secret } = require('./db');
 const { Usuario } = require('../models');
 
 module.exports = {

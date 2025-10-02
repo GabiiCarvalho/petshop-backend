@@ -1,3 +1,4 @@
+// models/Usuario.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize, Sequelize) => {
@@ -39,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Lojas',
+        model: 'lojas',
         key: 'id'
       }
     }

@@ -15,7 +15,9 @@ app.use(express.json());
 // Log detalhado de todas as requisições
 app.use((req, res, next) => {
     console.log('🌐', new Date().toLocaleString(), req.method, req.originalUrl);
-    console.log('📦 Body:', req.body);
+    if (Object.keys(req.body).length > 0) {
+        console.log('📦 Body:', req.body);
+    }
     next();
 });
 
@@ -33,7 +35,14 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         message: 'Servidor Rodando',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            usuarios: 'GET /api/usuarios/user (lista todos os usuários)',
+            auth: {
+                login: 'POST /api/auth/login',
+                cadastro: 'POST /api/auth/cadastrar-proprietario'
+            }
+        }
     });
 });
 
@@ -44,6 +53,7 @@ app.get('/', (req, res) => {
         version: '1.0.0',
         endpoints: {
             health: '/api/health',
+            usuarios: '/api/usuarios/user',
             auth: {
                 login: 'POST /api/auth/login',
                 cadastro: 'POST /api/auth/cadastrar-proprietario'
@@ -70,6 +80,7 @@ app.use('*', (req, res) => {
         method: req.method,
         availableEndpoints: [
             'GET /api/health',
+            'GET /api/usuarios/user',
             'POST /api/auth/login',
             'POST /api/auth/cadastrar-proprietario'
         ]
